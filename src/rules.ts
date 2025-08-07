@@ -116,7 +116,7 @@ const list = edit(/^( {0,3}bull)([ \t][^\n]+?)?(?:\n|$)/)
   .replace(/bull/g, bullet)
   .getRegex();
 
-const _custom_tags = 'code-snippet|step|accordion|badge|break|callout|card|columns|tabs|tooltip';
+const _custom_tags = 'code-snippet|step|accordion|badge|break|callout|card|columns|tab|tooltip|expand|parameterField';
 
 const _tag = 'address|article|aside|base|basefont|blockquote|body|caption'
     + '|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption'
