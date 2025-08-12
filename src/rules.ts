@@ -116,7 +116,11 @@ const list = edit(/^( {0,3}bull)([ \t][^\n]+?)?(?:\n|$)/)
   .replace(/bull/g, bullet)
   .getRegex();
 
-const _custom_tags = 'code\\-group|code\\-snippet|step|accordion|badge|break|callout|card|columns|tab|tooltip|expand|parameterField';
+const _custom_leaf_tags = 'code\\-snippet|badge|break|tooltip|parameterField';
+const _custom_container_tags = 'code\\-group|step|accordion|callout|card|columns|tab|expand';
+
+const _custom_tags = _custom_leaf_tags + '|' + _custom_container_tags;
+
 
 const _tag = 'address|article|aside|base|basefont|blockquote|body|caption'
     + '|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption'
@@ -129,14 +133,14 @@ const _tag = 'address|article|aside|base|basefont|blockquote|body|caption'
 const _comment = /<!--(?:-?>|[\s\S]*?(?:-->|$))/;
 const html = edit(
   '^ {0,3}(?:' // optional indentation
-+ '<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)' // (1)
++ '<(script|pre|code\\-snippet|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)' // (1)
 + '|comment[^\\n]*(\\n+|$)' // (2)
 + '|<\\?[\\s\\S]*?(?:\\?>\\n*|$)' // (3)
 + '|<![A-Z][\\s\\S]*?(?:>\\n*|$)' // (4)
 + '|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)' // (5)
 + '|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n[ \t]*)+\\n|$)' // (6)
-+ '|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ \t]*)+\\n|$)' // (7) open tag
-+ '|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ \t]*)+\\n|$)' // (7) closing tag
++ '|<(?!script|pre|code\\-snippet|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ \t]*)+\\n|$)' // (7) open tag
++ '|</(?!script|pre|code\\-snippet|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ \t]*)+\\n|$)' // (7) closing tag
 + ')', 'i')
   .replace('comment', _comment)
   .replace('tag', _tag)
@@ -151,7 +155,7 @@ const paragraph = edit(_paragraph)
   .replace('blockquote', ' {0,3}>')
   .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
   .replace('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
-  .replace('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)')
+  .replace('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|code\\-snippet|style|textarea|!--)')
   .replace('tag', _tag) // pars can be interrupted by type (6) html blocks
   .getRegex();
 
@@ -211,7 +215,7 @@ const blockGfm: Record<BlockKeys, RegExp> = {
     .replace('blockquote', ' {0,3}>')
     .replace('fences', ' {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n')
     .replace('list', ' {0,3}(?:[*+-]|1[.)]) ') // only lists starting from 1 can interrupt
-    .replace('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)')
+    .replace('html', '</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|code\\-snippet|style|textarea|!--)')
     .replace('tag', _tag) // pars can be interrupted by type (6) html blocks
     .getRegex(),
 };
